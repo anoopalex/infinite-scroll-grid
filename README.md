@@ -5,6 +5,43 @@ infinite-scroll list of users backed by a SQLite database, with an
 interactive sidebar for discovering and applying hobby/nationality filters
 based on the current result set.
 
+## Running with Docker Compose
+
+From the repo root:
+
+```bash
+docker compose up --build
+```
+
+- Client: http://localhost:3000 (nginx serving the production build, proxying `/api` to the server container)
+- Server: http://localhost:4000
+
+The server container seeds the SQLite database automatically on first run if
+`server/data/presight.db` doesn't already exist (persisted in the `server-data`
+named volume, so subsequent restarts reuse the same data). To force a
+re-seed, remove the volume:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+## Running locally (without Docker)
+
+Requires Node.js 20+.
+
+**1. Server**
+
+```bash
+cd server
+npm install
+npm run seed   # creates/recreates server/data/presight.db with ~2000 users
+npm run start  # http://localhost:4000
+```
+
+`SEED_COUNT` can be set to change how many users are generated (default `2000`), e.g. `SEED_COUNT=5000 npm run seed`.
+
+
 ## Stack
 
 - **Client**: React 19 + TypeScript, built with Vite, styled with Tailwind CSS, routed with `react-router-dom` (for URL search-param state, not multi-page navigation). Search text, selected filters, and sort field/direction are synced to the URL query string.
@@ -73,21 +110,6 @@ GET /api/stats?hobbies=Reading,Cooking
 - Search text, selected hobbies, selected nationalities, and sort field/direction are all reflected in the URL query string (`?firstName=&lastName=&hobbies=&nationalities=&sortBy=&sortDir=`) — reloading or sharing the URL restores the same view. (Scroll position/page is intentionally not part of the URL; infinite scroll always starts from the first page of the current filter/sort.)
 - Distinct loading, empty, and error (with retry) states for both the user list and the sidebar stats, which refetch together whenever search or filters change.
 
-## Running locally (without Docker)
-
-Requires Node.js 20+.
-
-**1. Server**
-
-```bash
-cd server
-npm install
-npm run seed   # creates/recreates server/data/presight.db with ~2000 users
-npm run start  # http://localhost:4000
-```
-
-`SEED_COUNT` can be set to change how many users are generated (default `2000`), e.g. `SEED_COUNT=5000 npm run seed`.
-
 **2. Client**
 
 In a second terminal:
@@ -95,31 +117,12 @@ In a second terminal:
 ```bash
 cd client
 npm install
-npm run dev    # http://localhost:5173
+npm run dev    # http://localhost:3000
 ```
 
-The Vite dev server proxies `/api` to `http://localhost:4000`, so no extra configuration is needed. Open http://localhost:5173.
+The Vite dev server proxies `/api` to `http://localhost:4000`, so no extra configuration is needed. Open http://localhost:3000.
 
-## Running with Docker Compose
 
-From the repo root:
-
-```bash
-docker compose up --build
-```
-
-- Client: http://localhost:3000 (nginx serving the production build, proxying `/api` to the server container)
-- Server: http://localhost:4000
-
-The server container seeds the SQLite database automatically on first run if
-`server/data/presight.db` doesn't already exist (persisted in the `server-data`
-named volume, so subsequent restarts reuse the same data). To force a
-re-seed, remove the volume:
-
-```bash
-docker compose down -v
-docker compose up --build
-```
 
 ## Project structure
 
