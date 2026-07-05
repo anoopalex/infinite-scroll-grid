@@ -1,4 +1,4 @@
-# Presight User Directory
+# User Directory
 
 A small full-stack user directory application: a searchable, filterable,
 infinite-scroll list of users backed by a SQLite database, with an
