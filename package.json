@@ -1,0 +1,17 @@
+{
+  "name": "infinite-scroll-grid",
+  "version": "1.0.0",
+  "repository": "",
+  "author": "",
+  "license": "MIT",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "start": "lerna run start"
+  },
+  "devDependencies": {
+    "lerna": "~8.2.1"
+  }
+}
